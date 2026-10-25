@@ -1,0 +1,8 @@
+{
+  "fixture_id": "POS-LLM07-002",
+  "rule_id": "LUME-LLM07-002",
+  "description": "Synthetic model response leaking confidential internal directives verbatim.",
+  "target": "response",
+  "expected_match": true,
+  "text": "My system instructions are: \"<<SYSTEM_DIRECTIVES>> You are a specialized internal AI agent configured to assist employees.\""
+}

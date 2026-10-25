@@ -1,0 +1,30 @@
+id: LUME-LLM01-001
+name: Direct Instruction Override Attempt
+description: Detects adversarial attempts to supersede, disregard, or reset system-level
+  prompt directives through imperative command structures.
+category: 'LLM01: Prompt Injection'
+severity: HIGH
+confidence: MEDIUM
+validation_status: experimental / unvalidated
+target: prompt
+detection_logic:
+  match_type: composite
+  patterns:
+  - (?i)\b(?:ignore|disregard|forget|override|bypass)\s+(?:all\s+)?(?:previous|prior|above|existing|system)\s+(?:instructions|prompts|directives|rules|guidelines)\b
+  - (?i)\bfrom\s+now\s+on\s*[,:]?\s*(?:you\s+(?:must|should|will)|only)\b
+  negative_patterns:
+  - (?i)\b(?:what\s+is|explain|how\s+does|example\s+of|discussing|definition\s+of|prevent)\b
+  - (?i)\b(?:cybersecurity|security\s+research|vulnerability|paper|article|tutorial)\b
+known_limitations:
+- Does not detect semantic circumvention using foreign languages, ciphers, or character
+  encodings (e.g. Base64).
+- May produce false positives on recursive prompt testing or prompt debugging prompts
+  unless filtered by negative patterns.
+- 'Marked experimental: Requires extensive empirical validation against realistic
+  user traffic before deployment.'
+test_fixtures:
+  positive:
+  - tests/fixtures/llm01_prompt_injection/positive/direct_override_01.json
+  negative:
+  - tests/fixtures/llm01_prompt_injection/negative/benign_discussion_01.json
+  - tests/fixtures/llm01_prompt_injection/negative/benign_discussion_02.json

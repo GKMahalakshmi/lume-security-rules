@@ -1,0 +1,30 @@
+id: LUME-LLM07-002
+name: Response-side Internal Directive Leakage
+description: Detects AI model output that discloses internal system directives, hidden
+  configuration parameters, or confidential preamble guardrails.
+category: 'LLM07: System Prompt Leakage'
+severity: CRITICAL
+confidence: LOW
+validation_status: experimental / unvalidated
+target: response
+detection_logic:
+  match_type: composite
+  patterns:
+  - (?i)\b(?:my\s+(?:system\s+)?(?:instructions|directives|pre-prompt)\s+(?:are|say|state)\s*[:\"]|internal\s+system\s+instructions\s*:)
+  - (?i)(?:<<SYSTEM_DIRECTIVES>>|\[PROTECTED_SYSTEM_PROMPT\]|CONFIDENTIAL_PREAMBLE:)
+  - (?i)\bYou\s+are\s+a\s+specialized\s+internal\s+AI\s+agent\s+configured\s+to\b
+  negative_patterns:
+  - (?i)\b(?:in\s+ai\s+architecture|a\s+system\s+prompt\s+is|as\s+an\s+ai|for\s+example)\b
+  - (?i)\b(?:guidelines\s+help\s+maintain|safety\s+policies\s+are)\b
+known_limitations:
+- Generic system prompts cannot be identified reliably by static regex alone without
+  model-specific canary tokens or embeddings.
+- High risk of false negatives if the model paraphrases rather than repeats its verbatim
+  prompt.
+- 'Marked experimental: Canary injection or differential analysis is required for
+  production leakage detection.'
+test_fixtures:
+  positive:
+  - tests/fixtures/llm07_system_prompt_leakage/positive/response_leakage_01.json
+  negative:
+  - tests/fixtures/llm07_system_prompt_leakage/negative/benign_discussion_02.json

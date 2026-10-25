@@ -1,0 +1,29 @@
+id: LUME-LLM01-002
+name: Role Override and Delimiter Impersonation
+description: Detects attempts to forge system delimiters, chat markup tokens, or adversarial
+  jailbreak persona markers (e.g., [SYSTEM], <<SYS>>, Developer Mode).
+category: 'LLM01: Prompt Injection'
+severity: CRITICAL
+confidence: MEDIUM
+validation_status: experimental / unvalidated
+target: prompt
+detection_logic:
+  match_type: composite
+  patterns:
+  - (?i)(?:\[(?:system|admin|developer)\]|<<(?:sys|system)>>|---BEGIN\s+(?:SYSTEM|PROMPT)---)
+  - (?i)\b(?:you\s+are\s+now\s+in\s+(?:developer\s+mode|dan\s+mode|unrestricted\s+mode))\b
+  - (?i)\b(?:act\s+as\s+(?:an?\s+)?unfiltered\s+(?:ai|assistant|model))\b
+  negative_patterns:
+  - (?i)\b(?:how\s+to\s+format|documentation\s+for|token\s+format|prompt\s+template)\b
+  - (?i)\b(?:quoted\s+text|educational|academic|research\s+paper)\b
+known_limitations:
+- Attackers may evade simple token patterns with spacing variations, zero-width characters,
+  or unusual casing.
+- Benign LLM configuration tools that manage prompt formatting may trigger delimiters
+  if not in developer scope.
+- 'Marked experimental: Synthetic verification only; real-world efficacy unproven.'
+test_fixtures:
+  positive:
+  - tests/fixtures/llm01_prompt_injection/positive/delimiter_hijack_01.json
+  negative:
+  - tests/fixtures/llm01_prompt_injection/negative/benign_discussion_01.json

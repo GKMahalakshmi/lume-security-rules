@@ -1,0 +1,8 @@
+{
+  "fixture_id": "NEG-LLM07-001",
+  "rule_id": "LUME-LLM07-001",
+  "description": "Benign architectural inquiry regarding what a system prompt is.",
+  "target": "prompt",
+  "expected_match": false,
+  "text": "What is a system prompt and how does it differ from a user prompt in AI architecture?"
+}
